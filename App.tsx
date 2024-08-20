@@ -24,17 +24,15 @@ function App(): React.JSX.Element {
         />
       </View>
       <View style={styles.calculatorButtonContainer}>
-        {options.map((item, itemIndex) =>
-          item.map((fn, fnIndex) => (
-            <Button
-              textStyle={{
-                color: buttonTextColorHandler(itemIndex, fnIndex),
-              }}
-              onClick={() => calcRootHandler(itemIndex, fnIndex, fn)}
-              value={fn}
-            />
-          )),
-        )}
+        {options.map((item, index) => (
+          <Button
+            textStyle={{
+              color: buttonTextColorHandler(index),
+            }}
+            onClick={calcRootHandler}
+            value={item}
+          />
+        ))}
       </View>
     </SafeAreaView>
   );
