@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 
 const options = [
   'C',
@@ -24,7 +24,11 @@ const options = [
 ];
 
 export function useAppController() {
-  const [expressions, setExpressions] = useState<string>('0');
+  const [expressions, setExpressions] = useState<string>('');
+
+  const [resultOfCalc, setResultOfCalc] = useState('');
+
+  const [hasOperator, setHasOperator] = useState(false);
 
   function buttonTextColorHandler(colIndex: number) {
     if (colIndex === 0) {
@@ -39,7 +43,7 @@ export function useAppController() {
   }
 
   function clear() {
-    setExpressions('0');
+    setExpressions('');
   }
 
   function result() {
@@ -50,18 +54,32 @@ export function useAppController() {
     setExpressions(prevValue => (prevValue += fn.toString()));
   }
 
-  function calcRootHandler(value: string) {
-    const key = options.indexOf(value)
+  function verifyIfExpressionHasNumber() {
+    return expressions.split('').some(expression => Number(expression));
+  }
 
-    if (expressions.length > 0) {
-      if (key === 0) {
-        clear();
-        return;
-      }
-      if (expressions.length > 0 && key === 19) {
-        result();
-        return;
-      }
+  function validateIfHasNumberInExpressions(value: string) {
+    return !verifyIfExpressionHasNumber() && !Number(value);
+  }
+
+  useEffect(() => {}, [expressions]);
+
+  function calcRootHandler(value: string) {
+    const key = options.indexOf(value);
+
+    if (key === 0) {
+      clear();
+      return;
+    }
+
+    if (expressions.length > 0 && key === 19) {
+      result();
+      return;
+    }
+
+    if (validateIfHasNumberInExpressions(value)) {
+      setResultOfCalc(eval(expressions));
+      return;
     }
 
     concat(value);
@@ -69,6 +87,8 @@ export function useAppController() {
 
   return {
     options,
+    resultOfCalc,
+    setResultOfCalc,
     expressions,
     setExpressions,
     buttonTextColorHandler,
